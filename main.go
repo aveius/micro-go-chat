@@ -14,6 +14,10 @@ func handleMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	initWS()
+
+	// Init web server
 	http.HandleFunc("/", handleMainPage)
 	http.HandleFunc("/wschat", handleInitChat)
 	log.Fatal(http.ListenAndServe(":8080", nil))
