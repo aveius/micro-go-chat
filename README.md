@@ -12,7 +12,7 @@ After that, open a couple browser windows on http://127.0.0.1:8080/, and you're 
 
 
 ## Status
-[x] websockets
-[ ] Persistency with postgre
-[ ] CI/CD
-[ ] Docker deployment
+- [x] websockets
+- [ ] Persistency with postgre
+- [ ] CI/CD
+- [ ] Docker deployment
