@@ -24,6 +24,7 @@ type datedMessage struct {
 	Timestamp int64 `json:"date"`
 }
 
+// Opens connection to DB, and initializes schema & table if necessary
 func openDb() {
 	// FIXME use envvar
 	connStr := "postgres://postgres:*********@127.0.0.1:5432/?sslmode=disable"
@@ -65,7 +66,7 @@ func openDb() {
 	// defer db.Close()
 }
 
-// Receives a JSON message from the frontend, and serializes it into the DB
+// Takes a JSON message from the frontend, and serializes it into the DB
 func saveMessage(p []byte) {
 	if db == nil {
 		return
@@ -74,7 +75,7 @@ func saveMessage(p []byte) {
 	var msg message
 	json.Unmarshal(p, &msg)
 
-	stmt, err := db.Prepare("INSERT INTO microchat.messages(author, message) VALUES($1, $2	)")
+	stmt, err := db.Prepare("INSERT INTO microchat.messages(author, message) VALUES($1, $2)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -84,14 +85,15 @@ func saveMessage(p []byte) {
 	}
 }
 
+// if DB available, retrieve last 5m messages (20 at most), return as JSON
 func handleLastMessages(w http.ResponseWriter, r *http.Request) {
 	if db == nil {
 		http.Error(w, "DB unavailable", http.StatusServiceUnavailable)
 		return
 	}
 
-	var res = make([]datedMessage, 0, 10)
-	// Get last 5m messages (20 at most), return as big JSON
+	var res = make([]datedMessage, 0, 20)
+
 	rows, err := db.Query("SELECT * FROM microchat.messages " +
 		"WHERE date >= CURRENT_TIMESTAMP - interval '5 minutes' " +
 		"ORDER BY date DESC " +
