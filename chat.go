@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// TODO persistency layer with postgre
 // type Message struct {
 // 	Author, Body string
 // }
