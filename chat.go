@@ -9,11 +9,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// TODO persistency layer with postgre
-// type Message struct {
-// 	Author, Body string
-// }
-
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -57,8 +52,10 @@ func runChat(conn *websocket.Conn) {
 			log.Println(err)
 			return
 		}
-		// Try to notify all opened WSs
 		log.Println("WS in: " + string(p))
+		// Save it if possible
+		saveMessage(p)
+		// Try to notify all opened WSs
 		messageAllWS(messageType, p)
 	}
 }

@@ -34,15 +34,18 @@ body {
     width: 100%;
     bottom: 0px;
 
-    border: 1px dotted red;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
 }
 
 #chat_output {
-    border: 1px gray solid;
+    width: 100%;
     max-height: calc(100vh - 200px);
     overflow-y: scroll;
 
     padding: 10px;
+    border: 1px gray solid;
 }
 
 
@@ -81,9 +84,8 @@ $(document).ready(function() {
 		$('#chat_output, #chat_input').fadeOut("fast");
 		$('<p>Sorry, your browser does not support WebSockets. </p>').appendTo('#main');
 	} else  {
-	    initSocket();
+	    loadRecentMsg();
     }
-
 
     $('#new_message').keypress(function(event) {
         if (event.keyCode == '13') {  // Enter
@@ -96,8 +98,41 @@ $(document).ready(function() {
 var socket = null;
 
 
+// Start by loading the most recent message, will trigger the WS connect after
+// FIXME race condition between DB query and WS established? Could miss msgs
+function loadRecentMsg() {
+    $.ajax({
+        url: "/last_messages",
+        dataType: "json",
+        success: displayRecentMsg,
+        error: handleRecentMsgError
+    })
+
+}
+function displayRecentMsg(data, textStatus, xhr) {
+    for (var i = data.length - 1; i >= 0; i--) {
+        var userMsg = data[i];
+        var renderedMessage = '<span class="msg_meta msg_author">'
+            + userMsg.author + '</span>'
+            + userMsg.body;
+        displayMessage(renderedMessage, "", new Date(userMsg.date))
+    }
+
+    displayMessage("Recent messages loaded", "event")
+    initSocket();
+}
+function handleRecentMsgError(data, textStatus, xhr) {
+    if (data.status == 503) {
+        displayMessage("no DB, recent messages unavailable", "warning")
+        initSocket()
+    }
+    else {
+        displayMessage("Could not load recent messages", "error")
+    }
+}
+
+
 function initSocket(){
-    //the connect function code is below
     socket = new WebSocket("ws://" + window.location.host + "/wschat");
     try {
         socket.onopen = function(){
@@ -108,7 +143,7 @@ function initSocket(){
             var userMsg = JSON.parse(msg.data);
             var renderedMessage = '<span class="msg_meta msg_author">'
                 + userMsg.author + '</span>'
-                + userMsg.message;
+                + userMsg.body;
             displayMessage(renderedMessage)
         }
 
@@ -121,11 +156,10 @@ function initSocket(){
     }
 }
 
-function displayMessage(body, klass) {
+function displayMessage(body, klass, date = new Date()) {
     var $msgEl = $('<p/>')
-    var now = new Date()
 
-    $msgEl.append('<span class="msg_meta">' + now.toLocaleTimeString() + '</span>')
+    $msgEl.append('<span class="msg_meta">' + date.toLocaleTimeString() + '</span>')
     $msgEl.append(body)
     $msgEl.addClass(klass)
 
@@ -143,7 +177,7 @@ function sendMessage() {
     }
 
     try {
-        socket.send(JSON.stringify({"author": author, "message": body}))
+        socket.send(JSON.stringify({"author": author, "body": body}))
     }
     catch(exception) {
         displayMessage("Sending failed: " + exception, "error")
