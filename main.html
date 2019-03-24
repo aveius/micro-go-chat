@@ -125,7 +125,7 @@ function displayMessage(body, klass) {
     var $msgEl = $('<p/>')
     var now = new Date()
 
-    $msgEl.append('<span class="msg_meta">' + now.getHours() + ':' +    now.getMinutes() + ':' + now.getSeconds() + '</span>')
+    $msgEl.append('<span class="msg_meta">' + now.toLocaleTimeString() + '</span>')
     $msgEl.append(body)
     $msgEl.addClass(klass)
 
