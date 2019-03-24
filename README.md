@@ -9,10 +9,12 @@ Usual way to run a go thing:
 
 After that, open a couple browser windows on http://127.0.0.1:8080/, and you're off!
 
+A local postgre instance can be used to add some persistency to this, though it needs a little more work for clean configuration (see "openDb()" in `persistency.go`)
+
 
 
 ## Status
 - [x] websockets
-- [ ] Persistency with postgre
+- [x] Persistency with postgre
 - [ ] CI/CD
 - [ ] Docker deployment
