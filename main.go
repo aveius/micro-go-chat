@@ -2,14 +2,17 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gobuffalo/packr"
 )
+
+var staticBox packr.Box
 
 // Serve single HTML page with embedded CSS and JS code
 func handleMainPage(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadFile("main.html")
+	body, err := staticBox.Find("main.html")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -17,6 +20,9 @@ func handleMainPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// magic from https://github.com/gobuffalo/packr
+	staticBox = packr.NewBox("./static")
+
 	initWS()
 
 	openDb()
