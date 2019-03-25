@@ -13,6 +13,7 @@ A local postgre instance can be used to add some persistency to this. To leverag
 
     postgres://USER:PASSWORD@127.0.0.1:5432/?sslmode=disable
 
+By default, access is limited to 127.0.0.1 (**/!\ No X-Forwarded checks**); if deploying to a remote server, put your connecting IP in the ENVVAR `WHITELISTED_IP`.
 
 
 ## Status

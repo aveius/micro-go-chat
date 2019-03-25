@@ -22,8 +22,8 @@ func main() {
 	openDb()
 
 	// Init web server
-	http.HandleFunc("/", handleMainPage)
-	http.HandleFunc("/last_messages", handleLastMessages)
-	http.HandleFunc("/wschat", handleInitChat)
+	http.Handle("/", mdwAuth(http.HandlerFunc(handleMainPage)))
+	http.Handle("/last_messages", mdwAuth(http.HandlerFunc(handleLastMessages)))
+	http.Handle("/wschat", mdwAuth(http.HandlerFunc(handleInitChat)))
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
