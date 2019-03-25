@@ -9,15 +9,17 @@ import (
 
 // Serve single HTML page with embedded CSS and JS code
 func handleMainPage(w http.ResponseWriter, r *http.Request) {
-	body, _ := ioutil.ReadFile("main.html")
+	body, err := ioutil.ReadFile("main.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 	w.Write(body)
 }
 
 func main() {
-	// Init DB
-	openDb()
-
 	initWS()
+
+	openDb()
 
 	// Init web server
 	http.HandleFunc("/", handleMainPage)
