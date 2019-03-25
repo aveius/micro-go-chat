@@ -16,8 +16,21 @@ A local postgre instance can be used to add some persistency to this. To leverag
 By default, access is limited to 127.0.0.1 (**/!\ No X-Forwarded checks**); if deploying to a remote server, put your connecting IP in the ENVVAR `WHITELISTED_IP`.
 
 
+## Docker packaging and run
+
+After checking out the project:
+
+    make build
+    sudo make docker
+
+And the usual to spin it up:
+
+    docker run -p 8080:8080 -it -e "WHITELISTED_IP=172.17.0.1" -e "PG_CONN_URL=postgres://..." micro-go-chat
+
+
+
 ## Status
 - [x] websockets
 - [x] Persistency with postgre
+- [x] Docker deployment
 - [ ] CI/CD
-- [ ] Docker deployment
