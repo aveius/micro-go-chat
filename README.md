@@ -9,7 +9,9 @@ Usual way to run a go thing:
 
 After that, open a couple browser windows on http://127.0.0.1:8080/, and you're off!
 
-A local postgre instance can be used to add some persistency to this, though it needs a little more work for clean configuration (see "openDb()" in `persistency.go`)
+A local postgre instance can be used to add some persistency to this. To leverage it, just configure `PG_CONN_URL` – see the "Connection String Parameters" in [`pq`'s documentation](https://godoc.org/github.com/lib/pq). For instance:
+
+    postgres://USER:PASSWORD@127.0.0.1:5432/?sslmode=disable
 
 
 

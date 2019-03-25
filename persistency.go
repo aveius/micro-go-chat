@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -27,9 +28,8 @@ type datedMessage struct {
 // Opens connection to DB, and initializes schema & table if necessary
 func openDb() {
 	// FIXME use envvar
-	connStr := "postgres://postgres:*********@127.0.0.1:5432/?sslmode=disable"
 	var err error
-	db, err = sql.Open("postgres", connStr)
+	db, err = sql.Open("postgres", os.Getenv("PG_CONN_URL"))
 	if err != nil {
 		panic(err)
 	}
